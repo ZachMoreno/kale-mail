@@ -3,8 +3,9 @@
 
     const express    = require('express'),
           bodyParser = require('body-parser'),
+          config     = require('./config'),
           helper     = require('sendgrid').mail,
-          sg         = require('sendgrid')('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'),
+          sg         = require('sendgrid')(config.sendgrid.apikey),
           kaleMail   = express();
 
     kaleMail.use(bodyParser.json());
@@ -25,13 +26,14 @@
         sg.API(request, (error, sgRes) => {
             if(!error) {
                 res.status(200).send({
-                    message: 'all good'
+                    message: 'all good',
+                    details: sgRes
                 });
             }
         });
     });
 
-    kaleMail.listen('8080', () => {
-        console.log('magic happens here');
+    kaleMail.listen(config.server.port, () => {
+        console.log('kale-mail is up @ http://' + config.server.ip + ':' + config.server.port);
     });
 })();
